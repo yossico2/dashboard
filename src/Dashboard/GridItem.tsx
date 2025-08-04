@@ -81,9 +81,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>((props, ref) =>
     const updateCurrentItem = (): void => {
         if (dashboard && dashboard.items && item.id) {
             dashboard.current = dashboard.items[item.id];
-            // Ensure the 'type' property is also carried over or set appropriately
-            // Assuming 'type' is part of DashboardContextItem or set on `dashboard.current`
-            (dashboard.current as any).type = type; // Casting to 'any' if 'type' is not explicitly on DashboardContextItem
+            dashboard.current!.type = type;
             updateDashboard(dashboard);
         }
     };
@@ -167,8 +165,8 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>((props, ref) =>
                     </MenuItem>
 
                     <Divider />
-                    {/* Map through chartItems to dynamically create menu items for chart type selection */}
                     {
+                        // Map through chartItems to dynamically create menu items for chart type selection
                         chartItems.map((chartType) => (
                             <MenuItem key={chartType.type} onClick={() => handleTypeClick(chartType.type)}>
                                 <ListItemIcon><chartType.icon /></ListItemIcon>

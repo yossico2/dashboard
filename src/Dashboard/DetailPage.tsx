@@ -56,12 +56,12 @@ export default function DetailPage(): React.ReactElement {
   /**
    * Handles the click event for changing the chart type from the menu.
    * Updates the `type` property of the `dashboard.current` item and closes the menu.
-   * @param {string} value - The new chart type value (e.g., "line", "bar").
+   * @param {string} type - The new chart type value (e.g., "line", "bar").
    */
-  const handleTypeClick = (value: ChartType): void => {
+  const handleTypeClick = (type: ChartType): void => {
     if (dashboard && dashboard.current) {
       // Cast dashboard.current to DashboardItem to ensure 'type' property is recognized
-      (dashboard.current).type = value;
+      dashboard.current.type = type;
       // It's good practice to update the context if a property of a nested object changes
       updateDashboard({ ...dashboard }); // Force context update by creating a new object reference
     }
