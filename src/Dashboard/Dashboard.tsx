@@ -19,7 +19,6 @@ import { Button, Grid } from "@mui/material";
 import { Responsive, WidthProvider, Layout, Layouts } from "react-grid-layout";
 
 import Panel from "./Panel";
-import DashboardService from "./DashboardService";
 import { useDashboard } from './DashboardContext';
 import { DashboardItem, DashboardModel } from "./DashboardModel";
 
@@ -65,15 +64,8 @@ export default function Dashboard(): React.ReactElement {
  */
 function DashboardGrid(): React.ReactElement {
 
-    // Memoize `DashboardService` instance to ensure it's created only once.
-    const dashboardService = React.useMemo(() => new DashboardService(), []);
     // Destructure dashboard state and update function from the DashboardContext.
-    const { dashboard, updateDashboard } = useDashboard();
-
-    // A dummy state to force re-render when an item is added or removed,
-    // especially useful if the dashboard object reference doesn't change
-    // but its internal properties (like `items`) do.
-    const [refreshDummy, setRefreshDummy] = React.useState<boolean>(false);
+    const { dashboard, updateDashboard, dashboardService } = useDashboard();
 
     // Memoize `WidthProvider(Responsive)` for `react-grid-layout` to avoid
     // re-creating it on every render, which can cause performance issues.
@@ -110,7 +102,6 @@ function DashboardGrid(): React.ReactElement {
     const addItem = (): void => {
         dashboardService.addItem(dashboard);
         updateDashboard(dashboard);
-        setRefreshDummy(prev => !prev); // Toggle dummy state to force re-render
     };
 
     /**
@@ -122,7 +113,6 @@ function DashboardGrid(): React.ReactElement {
     const removeItem = (chartId: string): void => {
         dashboardService.removeItem(dashboard, chartId);
         updateDashboard(dashboard);
-        setRefreshDummy(prev => !prev); // Toggle dummy state to force re-render
     };
 
     /**
