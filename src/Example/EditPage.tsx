@@ -1,5 +1,6 @@
-// DetailPage.tsx
+// EditPage.tsx
 // 
+
 import React from "react"; // Explicitly import React
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,19 +18,19 @@ import Divider from "@mui/material/Divider";
 import CloseIcon from "@mui/icons-material/Close";
 
 import ChartBlock from "./ChartBlock";
-import chartItems from "./ChartItems"; // Assuming chartItems is an array of objects with value, label, and icon
+import chartItems, { ChartItem } from "./ChartItems"; // Assuming chartItems is an array of objects with value, label, and icon
 
 // Import types from DashboardContext to ensure consistency
-import { useDashboard } from './DashboardContext';
-import { ChartType } from "./DashboardModel";
+import { useDashboard } from '../Dashboard/DashboardContext';
+import { ChartType } from "../Dashboard/DashboardModel";
 
 /**
- * `DetailPage` component displays a detailed view of a selected chart from the dashboard.
- * It allows changing the chart type and navigating back to the main dashboard or to the edit page.
+ * `EditPage` component allows editing a selected chart from the dashboard.
+ * It provides options to change the chart type and navigate back to the main dashboard or to the view page.
  */
-export default function DetailPage(): React.ReactElement {
-  // Destructure dashboard state from the DashboardContext.
-  const { dashboard, updateDashboard } = useDashboard(); // Assuming updateDashboard is also available and used for type change
+export default function EditPage(): React.ReactElement {
+  // Destructure dashboard state and update function from the DashboardContext.
+  const { dashboard, updateDashboard } = useDashboard();
 
   // Hook from react-router-dom for programmatic navigation.
   const navigate = useNavigate();
@@ -55,13 +56,13 @@ export default function DetailPage(): React.ReactElement {
 
   /**
    * Handles the click event for changing the chart type from the menu.
-   * Updates the `type` property of the `dashboard.current` item and closes the menu.
-   * @param {string} type - The new chart type value (e.g., "line", "bar").
+   * Updates the `type` property of the `dashboard.current` item in context and closes the menu.
+   * @param {string} value - The new chart type value (e.g., "line", "bar").
    */
-  const handleTypeClick = (type: ChartType): void => {
+  const handleTypeClick = (value: ChartType): void => {
     if (dashboard && dashboard.current) {
       // Cast dashboard.current to DashboardItem to ensure 'type' property is recognized
-      dashboard.current.type = type;
+      (dashboard.current).type = value;
       // It's good practice to update the context if a property of a nested object changes
       updateDashboard({ ...dashboard }); // Force context update by creating a new object reference
     }
@@ -70,7 +71,7 @@ export default function DetailPage(): React.ReactElement {
 
   /**
    * `useEffect` hook to redirect to the dashboard root if no current item is selected
-   * or if the dashboard context is not available.
+   * or if the dashboard context is not available upon component mount.
    */
   React.useEffect(() => {
     if (!dashboard || !dashboard.current) {
@@ -79,8 +80,8 @@ export default function DetailPage(): React.ReactElement {
     }
   }, [dashboard, navigate]); // Dependencies ensure effect runs when these change
 
-  // Early exit: Render nothing if no context or current item is available,
-  // as the useEffect will handle the redirection.
+  // Early exit: Render nothing if no context or current item is available.
+  // The useEffect will handle the redirection.
   if (!dashboard || !dashboard.current) {
     return (<></>);
   }
@@ -92,7 +93,7 @@ export default function DetailPage(): React.ReactElement {
     <Box sx={{ width: "90vw", height: "90vh" }}>
       <div className="detail-page__title">
         <MenuIcon htmlColor="gray" onClick={handleMenuClick} sx={{ px: 1, cursor: "pointer" }} />
-        <Typography variant="body2" color="gray">{currentItem.title} (details)</Typography>
+        <Typography variant="body2" color="gray">{currentItem.title} (edit)</Typography>
       </div>
 
       <Link className="go-back" to="/"><CloseIcon /></Link>
@@ -105,16 +106,16 @@ export default function DetailPage(): React.ReactElement {
         onClose={handleMenuClose}
         TransitionComponent={Fade}
       >
-        {/* Link to the edit page for the current item */}
+        {/* Link to the view page for the current item */}
         <MenuItem onClick={handleMenuClose}>
-          <Link to={`/${currentItem.id}/edit`} style={{ color: '#000000' }}>Edit</Link>
+          <Link to={`/${currentItem.id}/view`} style={{ color: '#000000' }}>View</Link>
         </MenuItem>
 
         <Divider />
 
-        {/* Map through chartItems to dynamically create menu items for chart type selection */}
         {
-          chartItems.map((chartType) => (
+          // Map through chartItems to dynamically create menu items for chart type selection.
+          chartItems.map((chartType: ChartItem) => (
             <MenuItem key={chartType.type} onClick={() => handleTypeClick(chartType.type)}>
               <ListItemIcon><chartType.icon /></ListItemIcon>
               <ListItemText>{chartType.label}</ListItemText>

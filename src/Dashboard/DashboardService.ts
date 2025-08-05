@@ -37,13 +37,13 @@ export default class DashboardService {
             layouts: {}
         };
 
-        for (let chartId in dashboard.items) {
-            const chartItem = dashboard.items[chartId];
-            chartItem.id = chartId;
+        for (let id in dashboard.items) {
+            const item = dashboard.items[id];
+            item.id = id;
 
             // generate random data
-            if (!chartItem.data)
-                chartItem.data = this.generateRandomData();
+            if (!item.data)
+                item.data = this.generateRandomData();
         }
 
         return dashboard;
@@ -94,8 +94,8 @@ export default class DashboardService {
     }
 
     /**
-     * 
-     * @param id Exporrt to file
+     * Export dashboard to file
+     * @param id
      * @param path 
      */
     exportDashboard(id: string, path: string) {
@@ -103,28 +103,24 @@ export default class DashboardService {
     }
 
     /**
-     * 
-     * @param id Publish to remote storage
+     * Add a new item to the dashboard
+     * @param dashboard 
      */
-    publishDashboard(id: string) {
-        // lilox:TODO
-    }
-
-    _getNextChartId(dashboard: DashboardModel): number {
-        return 0;
-    }
-
-    addItem(dashboard: DashboardModel): DashboardItem {
+    addItem(dashboard: DashboardModel, title?: string): DashboardItem {
         // generate new id
         let idNum = 1;
-        for (let chartId in dashboard.items) {
-            const id2 = parseInt(chartId.substring("chart".length));
+        const idPrefix = 'dashboard-item-';
+
+        for (let id in dashboard.items) {
+            const id2 = parseInt(id.substring(idPrefix.length));
             if (id2 >= idNum)
                 idNum = id2 + 1;
         }
 
-        const id = `chart${idNum}`;
-        const title = `Chart ${idNum}`;
+        const id = `${idPrefix}${idNum}`;
+        if (!title)
+            title = `Panel ${idNum}`;
+
         const type = "line";
 
         // generate random data
@@ -205,13 +201,13 @@ export default class DashboardService {
         }
     }
 
-    removeItem(dashboard: DashboardModel, chartId: string) {
-        // update dashboard items
-        delete dashboard.items[chartId];
+    removeItem(dashboard: DashboardModel, id: string) {
+        // update dashboard.items
+        delete dashboard.items[id];
 
         // update layouts
         for (let size in dashboard.layouts)
-            dashboard.layouts[size] = dashboard.layouts[size].filter(function (obj) { return obj.i !== chartId; });
+            dashboard.layouts[size] = dashboard.layouts[size].filter(function (obj) { return obj.i !== id; });
 
         // save changes
         this.saveDashboard(dashboard);

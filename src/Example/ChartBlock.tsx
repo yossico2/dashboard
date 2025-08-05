@@ -16,7 +16,7 @@ import {
   YAxis,
   ResponsiveContainer
 } from "recharts";
-import { ChartType } from "./DashboardModel";
+import { ChartType } from "../Dashboard/DashboardModel";
 
 // Define the shape of the data for the charts
 interface ChartDataItem {

@@ -2,7 +2,7 @@ export type ChartType = "pie" | "line" | "bar" | "area";
 
 export type DashboardModel = {
     current: DashboardItem | undefined
-    items: { [key: symbol]: DashboardItem };
+    items: { [id: symbol]: DashboardItem };
     layouts: Layouts
 }
 

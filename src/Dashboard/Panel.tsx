@@ -1,4 +1,4 @@
-// GridItem.tsx
+// Panel.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,29 +16,31 @@ import EditIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import Typography from "@mui/material/Typography";
 
-import ChartBlock from "./ChartBlock";
-import chartItems from "./ChartItems";
+import ChartBlock from "../Example/ChartBlock";
+import chartItems from "../Example/ChartItems";
 import { ChartType, DashboardItem } from "./DashboardModel";
 import { useDashboard } from './DashboardContext';
 
 /**
- * Interface representing the item prop passed to GridItem.
+ * Interface representing the item prop passed to Panel.
  * This extends the DashboardContextItem to include 'type', 'title', and 'data'.
  * Adjust this interface to accurately reflect the actual properties of `item`.
  */
-interface GridItemProps {
+interface PanelProps {
     item: DashboardItem;
     removeItem: (id: string) => void;
     className?: string; // Optional className from react-grid-layout
     style?: React.CSSProperties; // Optional style from react-grid-layout
     children?: React.ReactNode; // Optional children prop
+    // a function that renders the content of the grid item
+    renderContent?: (item: DashboardItem) => React.ReactNode;
 }
 
 /**
- * `GridItem` component represents a single draggable and resizable item within the dashboard grid.
- * It displays a chart and provides a menu for viewing, editing, deleting, and changing chart types.
+ * `Panel` component represents a single draggable and resizable item within the dashboard grid.
+ * It displays content provided by `renderContent` prop and provides a menu for basic item actions.
  */
-const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>((props, ref) => {
+const Panel = React.forwardRef<HTMLDivElement, PanelProps>((props, ref) => {
 
     const {
         item,
@@ -46,6 +48,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>((props, ref) =>
         className,
         style,
         children,
+        renderContent, // Function to render the content of the grid item
         ...rest
     } = props;
 
@@ -188,9 +191,13 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>((props, ref) =>
                         </Box>
                 }
             </div>
+            <div className="grid-item__content" style={{ overflow: 'hidden', flexBasis: "50%", height: "100%" }}>
+                {/* Render the content using the renderContent prop */}
+                {renderContent?.(item)}
+            </div>
             {children}
         </div>
     );
 });
 
-export default GridItem;
+export default Panel;
